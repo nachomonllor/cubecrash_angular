@@ -1,6 +1,7 @@
 import { Component, ViewChild, ElementRef } from '@angular/core';
 import { tablero } from './tablero';
 import {OnInit } from '@angular/core';
+import { celda } from './celda';
 
 
 @Component({
@@ -13,19 +14,9 @@ export class AppComponent implements OnInit{
   title = 'dibujatablero';
 
 
-    COLORES = [
-    'none',
-    'green',
-    'red', 
-    'blue',
-    'rgba(0, 255, 255)',
-    'rgba(0, 0, 255)',
-    'rgba(255, 132, 0)',
-    'rgba(255, 255, 0)',
-    'rgba(0, 255, 0)',
-    'rgba(255, 0, 255)',
-    'rgba(255, 0, 0)',
-  ];
+    COLORES =              ['none', 'green','DarkRed',     'blue'];
+    COLORESSELECCIONADOS = ['none',  'lime',    'red',  'skyblue'];
+
 
     tab : tablero;
     ctx: CanvasRenderingContext2D;
@@ -78,18 +69,52 @@ export class AppComponent implements OnInit{
     this.ctx.scale( this.LADO_CUADRADO , this.LADO_CUADRADO );
   }
   
-
   
+  dibujarCuadrado(x:number, y: number, c: celda, estaSeleccionado: boolean) {
+       this.ctx.fillStyle = 'black';
+        //this.ctx.fillRect(x , y, this.LADO_CUADRADO, this.LADO_CUADRADO);
+        if(c != null) {
+           if(estaSeleccionado) {
+            this.ctx.fillStyle = this.COLORESSELECCIONADOS[c.indiceColor];
+           }
+           else{
+            this.ctx.fillStyle = this.COLORES[c.indiceColor];
+           }
+        }
+        this.ctx.fillRect(x , y, this.LADO_CUADRADO, this.LADO_CUADRADO);
+  }
+  
+  contiene(grupo : Array<celda>,  c: celda) {
+    for(let i =0; i < grupo.length; i++) {
+        if(grupo[i].fila == c.fila && grupo[i].columna == c.columna) {
+            return true;
+        }     
+    }
+    return false;
+ }
+
+
   dibujarTablero() {   
     var x = 0;
     var y = 0;
+
+    var selecccionadas = this.tab.getSeleccionadas();
+
     for(let i =0; i< this.tab.filas; i++) {
        for(let j =0; j < this.tab.columnas; j++) {
-        this.ctx.fillStyle = this.COLORES[this.tab.matriz[i][j].indiceColor];
-        this.ctx.fillRect(x , y, this.LADO_CUADRADO, this.LADO_CUADRADO);
-
+          var celdaActual = this.tab.matriz[i][j];
+           
+          if(this.contiene(selecccionadas, celdaActual)) {
+            this.dibujarCuadrado(x, y, this.tab.matriz[i][j], true);
+          }
+          else{
+            this.dibujarCuadrado(x, y, this.tab.matriz[i][j], false);
+          }
+        
+        
          x += this.LADO_CUADRADO;
        }
+       
        x = 0;
        y += this.LADO_CUADRADO;
     }
