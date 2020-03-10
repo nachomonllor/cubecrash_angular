@@ -74,7 +74,7 @@ export class tablero {
      
         */
 
-        rellenar(x:number, y:number, indiceColor:number) {
+        rellenar(x:number, y:number, indiceColor:number)  {
             let stack = new Stack<celda>();
             stack.push(this.matriz[y][x]);
 
@@ -97,6 +97,10 @@ export class tablero {
 
             }
 
+        }
+
+        prueba() {
+            console.log("probando commits");
         }
 
         /*
